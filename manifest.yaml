@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: names
+  namespace: default
+data:
+  names: |-
+    googleapis.com
+    kube-dns.kube-system.svc.cluster.local.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dns-stress-test
+  name: dns-stress-test
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dns-stress-test
+  template:
+    metadata:
+      labels:
+        app: dns-stress-test
+    spec:
+      containers:
+      - image: axot/dnstress:dc17e5a
+        args:
+        - -f
+        - /config/names
+        imagePullPolicy: Always
+        name: dns-stress-test
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - name: config
+          mountPath: /config/names
+          subPath: names
+      volumes:
+      - name: config
+        configMap:
+          name: names
