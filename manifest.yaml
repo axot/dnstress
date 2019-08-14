@@ -11,6 +11,10 @@ metadata:
 data:
   names: |-
     googleapis.com
+    google.com
+    yahoo.com
+    google.com.ua
+    google.com.ar
     kube-dns.kube-system.svc.cluster.local.
 ---
 apiVersion: apps/v1
